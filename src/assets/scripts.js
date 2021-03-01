@@ -7,7 +7,38 @@ root.style.setProperty('--tile-size', `${TILE_SIZE}px`);
 root.style.setProperty('--helmet-offset', `${HELMET_OFFSET}px`);
 root.style.setProperty('--game-size', `${GAME_SIZE}px`);
 
-// ----
+// Button reload game 
+const reset = document.getElementById('reload');
+document.addEventListener('click' , () => {
+    location.reload();
+});
+
+let initialCounter = 0;
+let counterSteps = initialCounter;
+const counter = document.getElementById('steps');
+counter.innerHTML = `Passos: ${initialCounter}`;
+
+// regressive counter game 
+const time = document.getElementById('time');
+
+function minuteCounter(){
+    time.innerHTML = 30;
+
+    setInterval(() => {
+        const newTime = Number(time.innerHTML) - 1;
+        time.innerHTML = newTime;
+
+        if(newTime <= 0) {
+            clearInterval(time);
+            location.reload();
+            alert('Time is up... let is try again?');
+        }
+
+    }, 1000);
+
+}
+minuteCounter();
+
 
 function createBoard() {
     const boardElement = document.getElementById('board');
@@ -56,7 +87,7 @@ function createBoard() {
                 return (
                     currentElement.currentPosition.top === position.top &&
                     currentElement.currentPosition.left === position.left
-                )
+                );
             });
 
             return conflictItem;
@@ -101,7 +132,23 @@ function createBoard() {
                 currentElement.currentPosition = newDirection;
                 htmlElement.style.top = `${newDirection.top}px`;
                 htmlElement.style.left = `${newDirection.left}px`;
-                
+             
+                if (currentElement.item === 'hero'){
+
+                    if (
+                        buttonPressed === 'ArrowUp' ||
+                        buttonPressed === 'ArrowLeft' ||
+                        buttonPressed === 'ArrowRight' ||
+                        buttonPressed === 'ArrowDown'
+                    ) {
+
+                        counterSteps++;
+                        counter.innerHTML = `Passos: ${counterSteps}`;
+
+                    }
+
+                }
+
                 validateConflicts(currentElement, conflictItem);
             }
         }
@@ -155,13 +202,30 @@ const board = createBoard();
 // item -> mini-demon | chest | hero | trap
 // top -> number
 // left -> number
-board.createItem({ item: "trap", top: TILE_SIZE * 10, left: TILE_SIZE * 10 });
-board.createItem({ item: "chest", top: TILE_SIZE * 15, left: TILE_SIZE * 15 });
+
+const createDemons = 8;
+    for (i = 0; i< createDemons; i++) {
+        board.createEnemy({ top: TILE_SIZE * 8, left: TILE_SIZE * 14});
+        board.createEnemy({ top: TILE_SIZE * 7, left: TILE_SIZE * 5});
+    }
+
+const createTrap = 1;
+
+    setInterval (() => {
+        for(i = 0; i< createTrap; i++){
+            const topTrap = Math.floor(Math.random() * 10 + 8);
+            const leftTrap = Math.floor(Math.random() * 10 + 8);
+            board.createItem({ item: "trap", top: TILE_SIZE * topTrap, left: TILE_SIZE * leftTrap });
+        }
+    }, 1000);
+
+
+board.createItem({ item: "chest", top: TILE_SIZE * 3, left: TILE_SIZE * 17});
 
 board.createItem({ item: 'forniture', top: TILE_SIZE * 17, left: TILE_SIZE * 2 });
 board.createItem({ item: 'forniture', top: TILE_SIZE * 2, left: TILE_SIZE * 8 });
 board.createItem({ item: 'forniture', top: TILE_SIZE * 2, left: TILE_SIZE * 16 });
 board.createItem({ item: 'forniture', top: TILE_SIZE * 2, left: TILE_SIZE * 3 });
 
-board.createEnemy({ top: TILE_SIZE * 5, left: TILE_SIZE * 5});
+
 board.createHero({ top: TILE_SIZE * 16, left: TILE_SIZE * 2 });

@@ -24,6 +24,11 @@
   color: white;
   font-size: 25px;
 }
+.time {
+  color: white;
+  font-size: 25px;
+  padding-right: 10px;
+}
 
 .reset {
   color: white;
